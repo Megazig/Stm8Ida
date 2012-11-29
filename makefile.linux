@@ -1,11 +1,18 @@
 PROC=stm8
 DESCRIPTION=STM8:stm8
+ADDITIONAL_GOALS=config
+
+include ../module.unx
+
+config: $(C)stm8.cfg
+$(C)stm8.cfg: stm8.cfg
+	$(CP) $? $@
+
 # O1= idp
 # O2= asms
 
 PLFM_TMS320C1X=0x8009
 
-include ../module.unx
 
 # MAKEDEP dependency list ------------------
 $(F)ana$(O)   : $(I)area.hpp $(I)auto.hpp $(I)bytes.hpp $(I)funcs.hpp       \

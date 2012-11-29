@@ -862,6 +862,34 @@ static void opndx(op_t &x, int type, int index)
   }
 }
 
+static void oplndx(op_t &x, int type, int index)
+{
+  switch ( type )
+  {
+    case ndx_short:
+      opmem(x, dt_byte);
+      break;
+    case ndx_long:
+	  opmem(x, dt_word);
+	  cmd.auxpref |= aux_16;
+	  x.dtyp = dt_byte;
+	  x.addr <<= 8;
+	  x.addr |= ua_next_byte();
+      break;
+    case ndx_none:
+      x.type = o_phrase;
+      x.dtyp = dt_byte;
+      break;
+  }
+  if ( index )
+  {
+    if ( type != ndx_none && (cmd.auxpref & aux_indir) == 0 )
+      x.type = o_displ;
+    cmd.auxpref |= aux_index;
+    x.reg = index;
+  }
+}
+
 //--------------------------------------------------------------------------
 void HandleOp(opcode_t* op, ushort format, uchar which_op)
 {
@@ -949,7 +977,7 @@ void HandleOp(opcode_t* op, ushort format, uchar which_op)
 		{
 			cmd.auxpref |= aux_indir; cmd.auxpref |= aux_long;
 			int ndx = ndx_long; int index = F_NONDX;
-			opndx(cmd.Operands[which_op], ndx, index);
+			oplndx(cmd.Operands[which_op], ndx, index);
 		} break;
 		case F_SHORTPTRWX:
 		{
@@ -961,7 +989,7 @@ void HandleOp(opcode_t* op, ushort format, uchar which_op)
 		{
 			cmd.auxpref |= aux_indir; cmd.auxpref |= aux_long;
 			int ndx = ndx_long; int index = F_REGX;
-			opndx(cmd.Operands[which_op], ndx, index);
+			oplndx(cmd.Operands[which_op], ndx, index);
 		} break;
 		case F_SHORTPTRWY:
 		{
@@ -980,19 +1008,19 @@ void HandleOp(opcode_t* op, ushort format, uchar which_op)
 		{
 			cmd.auxpref |= aux_indir; cmd.auxpref |= aux_extd;
 			int ndx = ndx_long; int index = F_NONDX;
-			opndx(cmd.Operands[which_op], ndx, index);
+			oplndx(cmd.Operands[which_op], ndx, index);
 		} break;
 		case F_LONGPTREX:
 		{
 			cmd.auxpref |= aux_indir; cmd.auxpref |= aux_extd;
 			int ndx = ndx_long; int index = F_REGX;
-			opndx(cmd.Operands[which_op], ndx, index);
+			oplndx(cmd.Operands[which_op], ndx, index);
 		} break;
 		case F_LONGPTREY:
 		{
 			cmd.auxpref |= aux_indir; cmd.auxpref |= aux_extd;
 			int ndx = ndx_long; int index = F_REGY;
-			opndx(cmd.Operands[which_op], ndx, index);
+			oplndx(cmd.Operands[which_op], ndx, index);
 		} break;
 		case F_EXTOFFX:
 		{
@@ -1097,12 +1125,16 @@ int ana(void)
 		} break;
 		default:
 		{
+			msg("bad iform\n");
 			interr("ana");
 		} break;
 	}
 
 	if (cmd.size != op->len)
+	{
+		msg("bad size (%d:%d)\n", cmd.size, op->len);
 		interr("ana");
+	}
 
 	return cmd.size;
 }
