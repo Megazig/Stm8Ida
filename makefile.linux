@@ -1,0 +1,43 @@
+PROC=stm8
+DESCRIPTION=STM8:stm8
+# O1= idp
+# O2= asms
+
+PLFM_TMS320C1X=0x8009
+
+include ../module.unx
+
+# MAKEDEP dependency list ------------------
+$(F)ana$(O)   : $(I)area.hpp $(I)auto.hpp $(I)bytes.hpp $(I)funcs.hpp       \
+	        $(I)help.h $(I)ida.hpp $(I)idp.hpp $(I)kernwin.hpp          \
+	        $(I)lines.hpp $(I)llong.hpp $(I)nalt.hpp $(I)name.hpp       \
+	        $(I)netnode.hpp $(I)offset.hpp $(I)pro.h $(I)queue.hpp      \
+	        $(I)segment.hpp $(I)ua.hpp $(I)xref.hpp ../idaidp.hpp       \
+                ana.cpp ins.hpp
+$(F)emu$(O)   : $(I)area.hpp $(I)auto.hpp $(I)bytes.hpp $(I)funcs.hpp       \
+	        $(I)help.h $(I)ida.hpp $(I)idp.hpp $(I)kernwin.hpp          \
+	        $(I)lines.hpp $(I)llong.hpp $(I)nalt.hpp $(I)name.hpp       \
+	        $(I)netnode.hpp $(I)offset.hpp $(I)pro.h $(I)queue.hpp      \
+	        $(I)segment.hpp $(I)ua.hpp $(I)xref.hpp ../idaidp.hpp       \
+                emu.cpp ins.hpp
+$(F)ins$(O)   : $(I)area.hpp $(I)auto.hpp $(I)bytes.hpp $(I)funcs.hpp       \
+	        $(I)help.h $(I)ida.hpp $(I)idp.hpp $(I)kernwin.hpp          \
+	        $(I)lines.hpp $(I)llong.hpp $(I)nalt.hpp $(I)name.hpp       \
+	        $(I)netnode.hpp $(I)offset.hpp $(I)pro.h $(I)queue.hpp      \
+	        $(I)segment.hpp $(I)ua.hpp $(I)xref.hpp ../idaidp.hpp       \
+                ins.cpp ins.hpp
+$(F)out$(O)   : $(I)area.hpp $(I)auto.hpp $(I)bytes.hpp $(I)funcs.hpp       \
+	        $(I)help.h $(I)ida.hpp $(I)idp.hpp $(I)kernwin.hpp          \
+	        $(I)lines.hpp $(I)llong.hpp $(I)nalt.hpp $(I)name.hpp       \
+	        $(I)netnode.hpp $(I)offset.hpp $(I)pro.h $(I)queue.hpp      \
+	        $(I)segment.hpp $(I)ua.hpp $(I)xref.hpp ../idaidp.hpp       \
+                ins.hpp out.cpp
+$(F)reg$(O)   : $(I)area.hpp $(I)auto.hpp $(I)bytes.hpp $(I)entry.hpp       \
+	        $(I)funcs.hpp $(I)help.h $(I)ida.hpp $(I)idp.hpp            \
+	        $(I)kernwin.hpp $(I)lines.hpp $(I)llong.hpp $(I)nalt.hpp    \
+	        $(I)name.hpp $(I)netnode.hpp $(I)offset.hpp $(I)pro.h       \
+	        $(I)queue.hpp $(I)segment.hpp $(I)srarea.hpp $(I)ua.hpp     \
+                $(I)xref.hpp ../idaidp.hpp ins.hpp reg.cpp
+# $(F)idp$(O)   : idp.cpp tms320c1.hpp reg.hpp ins.hpp out.hpp asms.hpp
+# $(F)asms$(O)  : asms.cpp asms.hpp ins.hpp
+
