@@ -148,63 +148,76 @@ netnode helper;
 
 static int notify(processor_t::idp_notify msgid, ...)
 {
-  va_list va;
-  va_start(va, msgid);
+	int retcode = 1;
+	va_list va;
+	va_start(va, msgid);
 
-// A well behaving processor module should call invoke_callbacks()
-// in his notify() function. If this function returns 0, then
-// the processor module should process the notification itself
-// Otherwise the code should be returned to the caller:
+	// A well behaving processor module should call invoke_callbacks()
+	// in his notify() function. If this function returns 0, then
+	// the processor module should process the notification itself
+	// Otherwise the code should be returned to the caller:
 
-  int code = invoke_callbacks(HT_IDP, msgid, va);
-  if ( code ) return code;
+	int code = invoke_callbacks(HT_IDP, msgid, va);
+	if ( code ) return code;
 
-  switch(msgid)
-  {
-    case processor_t::init:
-      helper.create("$ stm8");
-      inf.mf = 1;
-      break;
+	switch(msgid)
+	{
+	case processor_t::init:
+		helper.create("$ stm8");
+		inf.mf = 1;
+		break;
 
-    case processor_t::newfile:  // new file loaded
-      {
-        char cfgfile[QMAXFILE];
-        get_cfg_filename(cfgfile, sizeof(cfgfile));
-        if ( choose_ioport_device(cfgfile, device, sizeof(device), NULL) )
-          set_device_name(device, IORESP_ALL);
-        create_words();
-      }
-      break;
+	case processor_t::newfile:  // new file loaded
+		{
+			char cfgfile[QMAXFILE];
+			get_cfg_filename(cfgfile, sizeof(cfgfile));
+			if ( choose_ioport_device(cfgfile, device, sizeof(device), NULL) )
+				set_device_name(device, IORESP_ALL);
+			create_words();
+		}
+		break;
 
-    case processor_t::oldfile:  // old file loaded
-      {
-        char buf[MAXSTR];
-        if ( helper.supval(-1, buf, sizeof(buf)) > 0 )
-          set_device_name(buf, IORESP_NONE);
-      }
-      break;
+	case processor_t::oldfile:  // old file loaded
+		{
+			char buf[MAXSTR];
+			if ( helper.supval(-1, buf, sizeof(buf)) > 0 )
+				set_device_name(buf, IORESP_NONE);
+		}
+		break;
 
-    case processor_t::is_jump_func:
-      {
-        const func_t *pfn = va_arg(va, const func_t *);
-        ea_t *jump_target = va_arg(va, ea_t *);
-        return is_jump_func(pfn, jump_target);
-      }
+	case processor_t::is_jump_func:
+		{
+			const func_t *pfn = va_arg(va, const func_t *);
+			ea_t *jump_target = va_arg(va, ea_t *);
+			retcode = is_jump_func(pfn, jump_target);
+		}
+		break;
 
-    case processor_t::is_sane_insn:
-      return is_sane_insn(va_arg(va, int));
+	case processor_t::is_sane_insn:
+		retcode = is_sane_insn(va_arg(va, int));
+		break;
 
-    case processor_t::may_be_func:
-                                // can a function start here?
-                                // arg: none, the instruction is in 'cmd'
-                                // returns: probability 0..100
-                                // 'cmd' structure is filled upon the entrace
-                                // the idp module is allowed to modify 'cmd'
-      return may_be_func();
+	case processor_t::may_be_func:
+		// can a function start here?
+		// arg: none, the instruction is in 'cmd'
+		// returns: probability 0..100
+		// 'cmd' structure is filled upon the entrace
+		// the idp module is allowed to modify 'cmd'
+		retcode = may_be_func();
+		break;
 
-  }
-  va_end(va);
-  return 1;
+	case processor_t::get_autocmt:
+		{
+			char *buf = va_arg(va, char *);
+			size_t bufsize = va_arg(va, size_t);
+			if ( qsnprintf(buf, bufsize, "%s", insn_auto_cmts[cmd.itype]) )
+				retcode = 2;
+		}
+		break;
+	}
+
+	va_end(va);
+	return retcode;
 }
 
 //-----------------------------------------------------------------------

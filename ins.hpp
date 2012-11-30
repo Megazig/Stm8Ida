@@ -2,6 +2,7 @@
 #define __INSTRS_HPP
 
 extern instruc_t Instructions[];
+extern char const *insn_auto_cmts[];
 
 enum nameNum
 {
@@ -102,8 +103,8 @@ STM8_sra,       // Shift right Arithmetic
 STM8_sraw,       // Shift right Arithmetic word
 STM8_srl,       // Shift right Logic
 STM8_srlw,       // Shift right Logic word
-STM8_sub,       // Substraction
-STM8_subw,       // Substraction word
+STM8_sub,       // Subtraction
+STM8_subw,       // Subtraction word
 STM8_swap,       // SWAP nibbles
 STM8_swapw,       // SWAP bytes
 STM8_tnz,       // Test for Neg & Zero
