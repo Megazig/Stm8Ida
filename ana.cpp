@@ -999,7 +999,7 @@ void HandleOp(opcode_t* op, ushort format, uchar which_op)
 		} break;
 		case F_EXTMEM:
 		{
-			if ((cmd.itype == STM8_int) || (cmd.itype == STM8_callf))
+			if ((cmd.itype == STM8_int) || (cmd.itype == STM8_callf) || (cmd.itype == STM8_jpf))
 				opextaddr(cmd.Operands[which_op], dt_dword);
 			else
 				opextmem(cmd.Operands[which_op], dt_dword);

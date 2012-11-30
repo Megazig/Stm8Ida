@@ -233,8 +233,7 @@ static char const *lnames[] = {
 processor_t LPH =
 {
   IDP_INTERFACE_VERSION,        // version
-  //PLFM_STM8,                    // id
-  PLFM_TMS320C1X,               // id
+  0x8000 | 1234,                // id
   PRN_HEX|PR_RNAMESOK,
   8,                            // 8 bits in a byte for code segments
   8,                            // 8 bits in a byte for other segments
