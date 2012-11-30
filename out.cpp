@@ -18,7 +18,7 @@ static void outmem(op_t &x, ea_t ea)
       out_tagon(COLOR_ERROR);
       OutLong(x.addr, 16);
       out_tagoff(COLOR_ERROR);
-      QueueMark(Q_noName,cmd.ea);
+      QueueSet(Q_noName,cmd.ea);
     }
     else
     {
@@ -35,7 +35,7 @@ static void outmem(op_t &x, ea_t ea)
 }
 
 //----------------------------------------------------------------------
-bool outop(op_t &x)
+bool idaapi outop(op_t &x)
 {
   switch ( x.type )
   {
@@ -110,7 +110,7 @@ bool outop(op_t &x)
 }
 
 //----------------------------------------------------------------------
-void out(void)
+void idaapi out(void)
 {
   char buf[MAXSTR];
   init_output_buffer(buf, sizeof(buf));
@@ -140,7 +140,7 @@ void out(void)
 }
 
 //--------------------------------------------------------------------------
-void segstart(ea_t ea)
+void idaapi segstart(ea_t ea)
 {
   char buf[MAXSTR];
   char *const end = buf + sizeof(buf);
@@ -203,12 +203,13 @@ void segstart(ea_t ea)
 }
 
 //--------------------------------------------------------------------------
-void segend(ea_t)
+void idaapi segend(ea_t)
 {
 }
 
 //--------------------------------------------------------------------------
-void header(void) {
+void idaapi header()
+{
   gen_cmt_line("Processor       : %-8.8s", inf.procName);
 //  gen_cmt_line("Target assembler: %s", ash.name);
 //  gen_cmt_line("Byte sex        : %s", inf.mf ? "Big endian" : "Little endian");
@@ -219,7 +220,7 @@ void header(void) {
 }
 
 //--------------------------------------------------------------------------
-void footer(void)
+void idaapi footer()
 {
   char name[MAXSTR];
   get_colored_name(BADADDR, inf.beginEA, name, sizeof(name));

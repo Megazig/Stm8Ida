@@ -104,7 +104,7 @@ char device[MAXSTR] = "";
 static size_t numports;
 static ioport_t *ports = NULL;
 
-#include "../iocommon.cpp"
+#include <iocommon.cpp>
 
 //
 //static void load_symbols(void)
@@ -114,7 +114,7 @@ static ioport_t *ports = NULL;
 //}
 //
 //----------------------------------------------------------------------
-const ioport_t *find_sym(int address)
+const ioport_t *find_sym(ea_t address)
 {
   const ioport_t *port = find_ioport(ports, numports, address);
   return port;
@@ -123,7 +123,7 @@ const ioport_t *find_sym(int address)
 //----------------------------------------------------------------------
 static void create_words(void)
 {
-  for ( int i=0; i < numports; i++ )
+  for ( size_t i=0; i < numports; i++ )
   {
     ea_t ea = ports[i].address;
     if ( isTail(get_flags_novalue(ea)) )
@@ -133,7 +133,7 @@ static void create_words(void)
 }
 
 //--------------------------------------------------------------------------
-const char *set_idp_options(const char *keyword,int /*value_type*/,const void * /*value*/)
+const char * idaapi set_idp_options(const char *keyword,int /*value_type*/,const void * /*value*/)
 {
   if ( keyword != NULL ) return IDPOPT_BADKEY;
   char cfgfile[QMAXFILE];
@@ -226,8 +226,8 @@ processor_t LPH =
   8,                            // 8 bits in a byte for code segments
   8,                            // 8 bits in a byte for other segments
 
-  (char**)shnames,
-  (char**)lnames,
+  (char const **)shnames,
+  (char const **)lnames,
 
   asms,
 
@@ -251,7 +251,7 @@ processor_t LPH =
   NULL,                 // can have type
 
   qnumber(register_names), // Number of registers
-  (char**)register_names,       // Register names
+  (char const **)register_names,       // Register names
   NULL,                 // get abstract register
 
   0,                    // Number of register files

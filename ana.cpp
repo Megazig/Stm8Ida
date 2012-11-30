@@ -754,8 +754,8 @@ inline void opextmem(op_t &x, char dtyp)
 {
   x.type = o_mem;
   x.dtyp = dtyp;
-  x.offb = cmd.size;
-  u_int32_t value = ua_next_byte() << 16;
+  x.offb = (char)cmd.size;
+  uint32_t value = ua_next_byte() << 16;
   value |= ua_next_byte() << 8;
   value |= ua_next_byte();
   x.addr = value;
@@ -765,7 +765,7 @@ inline void opmem(op_t &x, char dtyp)
 {
   x.type = o_mem;
   x.dtyp = dtyp;
-  x.offb = cmd.size;
+  x.offb = (char)cmd.size;
   x.addr = ua_next_byte();
 }
 
@@ -773,12 +773,12 @@ inline void opmem(op_t &x, char dtyp)
 inline void opaddr(op_t &x, char dtyp)
 {
 
-  ulong value = ReadU16();
+  uint32_t value = ReadU16();
   x.type = o_near;
   x.dtyp = dtyp;
   x.addr = value;
 }
-inline void opimm(op_t &x, ulong value, char dtyp)
+inline void opimm(op_t &x, uint32_t value, char dtyp)
 {
   x.type = o_imm;
   x.dtyp = dtyp;
@@ -789,7 +789,7 @@ inline void oprel(op_t &x)
 {
   x.type = o_near;
   x.dtyp = dt_code;
-  x.offb = cmd.size;
+  x.offb = (char)cmd.size;
   long disp = char(ua_next_byte());
   x.addr = cmd.ip + cmd.size + disp;
 }
@@ -806,7 +806,7 @@ inline void opdsp(op_t &x, int reg, char dtyp)
   x.type = o_displ;
   x.dtyp = dtyp;
   x.reg  = reg;
-  x.offb = cmd.size;
+  x.offb = (char)cmd.size;
   if (dtyp == dt_byte)
 	  x.addr = ua_next_byte();
   else if (dtyp == dt_word)
@@ -1074,7 +1074,7 @@ void Insn3(opcode_t* op)
 }
 
 //--------------------------------------------------------------------------
-int ana(void)
+int idaapi ana(void)
 {
 	opcode_t* op = NULL;
 	uchar code = ua_next_byte();

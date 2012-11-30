@@ -1,8 +1,11 @@
 #ifndef _STM8_HPP
 #define _STM8_HPP
 
-#include "../idaidp.hpp"
+#define NO_OBSOLETE_FUNCS
+
+#include <idaidp.hpp>
 #include <diskio.hpp>
+#include <cstdint>
 #include "ins.hpp"
 
 // o_void  Inherent      nop
@@ -53,26 +56,26 @@ enum regnum_t
 extern netnode helper;
 
 ea_t calc_mem(ea_t ea);         // map virtual to physical ea
-const ioport_t *find_sym(int address);
+const ioport_t *find_sym(ea_t address);
 //------------------------------------------------------------------
 void interr(const char *module);
 
-void header(void);
-void footer(void);
+void idaapi header(void);
+void idaapi footer(void);
 
-void segstart(ea_t ea);
-void segend(ea_t ea);
+void idaapi segstart(ea_t ea);
+void idaapi segend(ea_t ea);
 void assumes(ea_t ea);         // function to produce assume directives
 
-void out(void);
+void idaapi out(void);
 int  outspec(ea_t ea,uchar segtype);
 
-int  ana(void);
-int  emu(void);
-bool outop(op_t &op);
+int  idaapi ana(void);
+int  idaapi emu(void);
+bool idaapi outop(op_t &op);
 void data(ea_t ea);
 
-int  is_align_insn(ea_t ea);
+int  idaapi is_align_insn(ea_t ea);
 bool create_func_frame(func_t *pfn);
 void out_rename(ea_t ea,int storage);
 int  out_storage_class(ea_t ea);
