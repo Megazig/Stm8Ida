@@ -930,7 +930,7 @@ void HandleOp(opcode_t* op, ushort format, uchar which_op)
 		} break;
 		case F_LONGMEM:
 		{
-			if (cmd.itype == STM8_call)
+			if ((cmd.itype == STM8_call) || (cmd.itype == STM8_jp))
 				opaddr(cmd.Operands[which_op], dt_word);
 			else
 				oplng(cmd.Operands[which_op]);
