@@ -78,9 +78,9 @@ static void process_operand(op_t &x, bool isload)
 
 
 //----------------------------------------------------------------------
-int emu(void)
+int idaapi emu(void)
 {
-  ulong Feature = cmd.get_canon_feature();
+  uint32_t Feature = cmd.get_canon_feature();
 
   flow = ((Feature & CF_STOP) == 0);
 
@@ -131,9 +131,9 @@ int is_sane_insn(int /*nocrefs*/)
 }
 
 //----------------------------------------------------------------------
-int is_align_insn(ea_t ea)
+int idaapi is_align_insn(ea_t ea)
 {
-  if ( !ua_ana0(ea) ) return 0;
+  if ( !decode_insn(ea) ) return 0;
   switch ( cmd.itype )
   {
     case STM8_nop:
