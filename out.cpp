@@ -56,9 +56,7 @@ bool idaapi outop(op_t &x)
 // o_displ Short     Direct   Indexed  ld A,($10,X)             00..1FE                + 1
 // o_displ Long      Direct   Indexed  ld A,($1000,X)           0000..FFFF             + 2
       out_symbol('(');
-      OutValue(x, OOFS_IFSIGN
-                 |OOF_ADDR
-                 |((cmd.auxpref & aux_16) ? OOFW_16 : OOFW_8));
+      OutValue(x, OOFS_IFSIGN|OOF_ADDR|OOFW_IMM);
       out_symbol(',');
       outreg(x.reg);
       out_symbol(')');
