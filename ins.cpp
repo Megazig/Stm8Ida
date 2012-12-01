@@ -36,7 +36,7 @@ instruc_t Instructions[] = {
 	{ "incw",       CF_USE1|CF_CHG1                 },        // Increment Word
 	{ "int",        CF_USE1|CF_CALL|CF_STOP         },        // Interrupt
 	{ "iret",       CF_STOP                         },        // Interrupt routine return
-	{ "jp",         CF_USE1|CF_STOP                 },        // Absolute Jump
+	{ "jp",         CF_USE1|CF_STOP|CF_JUMP         },        // Absolute Jump
 	{ "jpf",        CF_USE1|CF_STOP                 },        // Absolute Jump far
 	{ "jra",        CF_USE1|CF_STOP                 },        // Jump relative always
 //	{ "jrt",        CF_USE1|CF_STOP                 },        // Jump relative
