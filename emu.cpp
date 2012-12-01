@@ -131,6 +131,105 @@ int is_sane_insn(int /*nocrefs*/)
 }
 
 //----------------------------------------------------------------------
+// Known STM8 switch idioms:
+//  Switch statements are straightforward:
+//     cp      a, #$E        ; Arithmetic Compare
+//     jrnc    out_of_bounds ; Jump if C = 0
+//     clrw    x             ; x = 0
+//     ld      xl, a         ; x |= a & 0xff
+//     sllw    x             ; index = x * sizeof(u16)
+//     ldw     x, ($F693,x)  ; x = *(0xf693 + index)
+//     jp      (x)           ; Absolute Jump
+//   out_of_bounds:
+//     jra     return        ; Jump relative always
+//  Indirect calls are less code but harder to resolve,
+//  as they lookup the target address from memory that is
+//  modified during runtime.
+//     ld      a, byte_1E0   ; a = index
+//     clrw    y             ; y = 0
+//     ld      yl, a         ; y |= a & 0xff
+//     sllw    y             ; y *= sizeof(u16)
+//     ldw     y, (7,y)      ; t = *(7 + y) // data at 7 is changed at runtime
+//     call    (y)           ; Call subroutine
+#include <jptcmn.cpp>
+
+class stm8_jump_pattern_t : public jump_pattern_t
+{
+public:
+	stm8_jump_pattern_t(switch_info_ex_t &si)
+		: jump_pattern_t(roots, depends, si)
+		, indirect_register(-1)
+		, index_register(-1)
+	{
+	}
+
+	static char const roots[];
+	static char const depends[][2];
+
+	int indirect_register;
+	int index_register;
+
+	bool jpi0()
+	{
+		bool valid = cmd.itype == STM8_jp;
+		if (valid)
+			indirect_register = cmd.Op1.reg;
+		return valid;
+	}
+	bool jpi1()
+	{
+		bool valid = cmd.itype == STM8_ldw && cmd.Op1.reg == indirect_register;
+		if (valid)
+			si.jumps = cmd.Op2.addr;
+		return valid;
+	}
+	bool jpi2()
+	{
+		return cmd.itype == STM8_sllw && cmd.Op1.reg == indirect_register;
+	}
+	bool jpi3()
+	{
+		uint16 dst_reg = cmd.Op1.reg;
+		if ((indirect_register == regnum_t::X) && (dst_reg != regnum_t::XL))
+			return false;
+		else if ((indirect_register == regnum_t::Y) && (dst_reg != regnum_t::YL))
+			return false;
+
+		index_register = cmd.Op2.reg;
+
+		return cmd.itype == STM8_ld;
+	}
+	bool jpi4()
+	{
+		return cmd.itype == STM8_clrw && cmd.Op1.reg == indirect_register;
+	}
+	bool jpi6()
+	{
+		bool valid = cmd.itype == STM8_cp && cmd.Op1.reg == index_register;
+		if (valid)
+			si.ncases = cmd.Op2.value;
+		return valid;
+	}
+};
+
+char const stm8_jump_pattern_t::roots[] = { 1 };
+char const stm8_jump_pattern_t::depends[][2] =
+{
+	{ 1 },    // jp      (x)
+	{ 2 },    // ldw     x, ($F693,x)
+	{ 3 },    // sllw    x
+	{ 4, 6 }, // ld      xl, a
+	{ 0 },    // clrw    x
+	{ 0 },    // jrnc    out_of_bounds
+	{ 0 }     // cp      a, #$E
+};
+
+bool idaapi is_switch(switch_info_ex_t *si)
+{
+	return stm8_jump_pattern_t(*si).match(cmd.ea);
+}
+
+//----------------------------------------------------------------------
 int idaapi is_align_insn(ea_t ea)
 {
   if ( !decode_insn(ea) ) return 0;

@@ -293,7 +293,7 @@ processor_t LPH =
                         // normal float
                         // normal double
                         // long double
-  NULL,                 // int (*is_switch)(switch_info_t *si);
+  is_switch,            // bool idaapi is_switch(switch_info_ex_t *si);
   NULL,                 // long (*gen_map_file)(FILE *fp);
   NULL,                 // ulong (*extract_address)(ulong ea,const char *string,int x);
   NULL,                 // int (*is_sp_based)(op_t &x);

@@ -75,6 +75,7 @@ int  idaapi emu(void);
 bool idaapi outop(op_t &op);
 void data(ea_t ea);
 
+bool idaapi is_switch(switch_info_ex_t *si);
 int  idaapi is_align_insn(ea_t ea);
 bool create_func_frame(func_t *pfn);
 void out_rename(ea_t ea,int storage);
