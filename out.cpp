@@ -212,7 +212,7 @@ void idaapi header()
 //  gen_cmt_line("Target assembler: %s", ash.name);
 //  gen_cmt_line("Byte sex        : %s", inf.mf ? "Big endian" : "Little endian");
   if ( ash.header != NULL )
-    for ( const char **ptr=ash.header; *ptr != NULL; ptr++ )
+    for ( char const *const *ptr=ash.header; *ptr != NULL; ptr++ )
       printf_line(0,COLSTR("%s",SCOLOR_ASMDIR),*ptr);
   MakeNull();
 }
