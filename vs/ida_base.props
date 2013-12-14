@@ -2,7 +2,8 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <IDA_DIR>C:\Program Files (x86)\IDA 6.3\</IDA_DIR>
+    <IDA_DIR>C:\Program Files (x86)\IDA 6.5\</IDA_DIR>
+    <IDASDK_DIR>c:\src\idasdk65\</IDASDK_DIR>
   </PropertyGroup>
   <PropertyGroup>
     <TargetExt>.w32</TargetExt>
@@ -23,18 +24,13 @@
       <Command>xcopy "$(TargetPath)" "$(IDA_DIR)procs\" /d /y
 xcopy "$(ProjectDir)..\$(ProjectName).cfg" "$(IDA_DIR)cfg\" /d /y</Command>
     </PostBuildEvent>
-    <CustomBuildStep>
-      <Command>$(IDASDK_DIR)bin\mkidp.exe $(TargetPath) "STMicroelectronics 8:STM8"</Command>
-    </CustomBuildStep>
-    <CustomBuildStep>
-      <TreatOutputAsContent>true</TreatOutputAsContent>
-      <Outputs>DummyPathToTrigger</Outputs>
-      <Inputs>$(TargetPath)</Inputs>
-    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
     <BuildMacro Include="IDA_DIR">
       <Value>$(IDA_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="IDASDK_DIR">
+      <Value>$(IDASDK_DIR)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>
